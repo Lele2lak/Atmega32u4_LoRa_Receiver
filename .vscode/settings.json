@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "freertos.h": "c",
+        "led_handling.h": "c"
+    }
+}

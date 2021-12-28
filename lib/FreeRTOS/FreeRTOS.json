@@ -1,0 +1,17 @@
+{
+    "name": "FreeRTOS",
+    "build": {
+        "includeDir":
+        [
+            "include/*.h",
+            "src/portable/GCC/ATMega323/*.h"
+        ],
+        "srcDir":
+        [
+            "src/*.c",
+            "src/portable/GCC/ATMega323/*.c",
+            "src/portable/GCC/Common/*.c",
+            "src/portable/oWatcom/16BitDOS/PC/*.c"
+        ]
+    }
+}
