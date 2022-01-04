@@ -5,6 +5,7 @@
 
 #define POINT   0
 #define NODE    1
+#define BATPORT A9
 
 /*
  * Define wether a light is a point or a node.

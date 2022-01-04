@@ -5,6 +5,12 @@
 #ifndef LORA_HANDLING_H
 #define LORA_HANDLING_H
 
+#include <RH_RF95.h>
+
+#define RFM95_CS 8
+#define RFM95_RST 4
+#define RFM95_INT 7
+
 enum color {
     RED,
     GREEN,
@@ -32,13 +38,29 @@ enum status {
 /* 
  * Definition de la forme generale d'un message reçu par une autre lampe/station
  */
-
 struct message_t {
     enum action message_action;
-    uint8_t* data;
+    uint8_t data[10];
 };
 
-void lora_handling_message_received(void* parameters);
+/*
+ * Defines action to perform when a message is received
+ */
+void lora_handling_message_received(void* taskparameters);
 
+/*
+ * Implement a default config for Lora protocol
+ */
+void lora_default_config(void* taskparameters);
+
+/*
+ * Wait for a message to come
+ */
+void lora_catch_up_message(void* taskparameters);
+
+/*
+ * Init the LoRa Receive process.
+ */
+void lora_rcv_init();
 
 #endif /*LORA_HANDLING_H*/

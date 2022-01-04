@@ -26,6 +26,31 @@ void internal_report(void) {
     uint8_t light_type = ctxt.status;
     uint8_t id = ctxt.id;
     uint32_t battery_lvl;
+
+    /*
+     *Check niveau de batterie < 574
+     */
+    battery_lvl = analogRead(BATPORT);
+    Serial.println("Battery: ");
+    Serial.print(battery_lvl);
+    battery_lvl *=2;
+    battery_lvl *= 3.3;
+    battery_lvl /= 1024;
+    Serial.print(battery_lvl);
+
+    /*
+     *Check LED
+     */
+    
+
+    /*
+     *Reponse KO
+     */
+
+
+    /*
+     *Si c'esun un noeud => Renvoyer les ids des lampes KO
+     */
     
 }
 
