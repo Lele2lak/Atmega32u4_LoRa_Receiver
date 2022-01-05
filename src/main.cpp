@@ -1,3 +1,8 @@
+/*
+ * Ce code est la propriété des membres du projet DAZZ Illumination Tour Eiffel. Sa copie et son
+ * utilisation est réglementé par la convention de partenariat établie conjointement entre l'
+ * ECE Paris, la Société d'Exploitation de la Tour Eiffel, ainsi que les membres du projet.
+ */
 #include <Arduino.h>
 
 extern "C" {
@@ -12,20 +17,21 @@ extern "C" {
 #include "internal.hpp"
 #include <SPI.h>
 
-int main() {
-  
-  init();
-  setup();
 
-  //digitalWrite(11,HIGH);
-  //Serial.begin(115200);
+void setup() {
   
-  lora_rcv_init();
-  //internal_launch_config(NULL);
-  //internal_report();
+  Serial.begin(9600);
+  delay(100);
 
-  TaskHandle_t internal_config_launch_handle = NULL;
+  pinMode(9, OUTPUT);
+  pinMode(10, OUTPUT);
+  pinMode(11, OUTPUT);
+  pinMode(12, OUTPUT);
+  pinMode(13, OUTPUT);
+
   TaskHandle_t lora_catch_up_task = NULL;
+
+  lora_rcv_init();
 
   xTaskCreate(lora_catch_up_message,
               "lora_catch_up_message",
@@ -35,33 +41,16 @@ int main() {
               &lora_catch_up_task
               );
   
-  /*xTaskCreate(internal_launch_config,
-              "internal_launch_config",
-              configMINIMAL_STACK_SIZE,
-              NULL,
-              1,
-              &internal_config_launch_handle
-              );
-  */
-
   vTaskStartScheduler();
-
-}
-
-void setup() {
-  /* Serial.begin(9600);
-   while (!Serial) {
-     //delay(1);
-   }*/
-
-  pinMode(9, OUTPUT);
-  pinMode(10, OUTPUT);
-  pinMode(11, OUTPUT);
-  pinMode(12, OUTPUT);
-  pinMode(13, OUTPUT);
-}
-
-/*void loop() {
-
   
-}*/
+}
+
+
+void loop() {
+  /*
+   * The loop method has no utility in so much that we use the FreeRTOS scheduler.
+   * Arduino still needs it.
+   * TODO: Find a way to delete it (rewrite the digitalwrite arduino library to delete Arduino.h).
+   */
+  
+}

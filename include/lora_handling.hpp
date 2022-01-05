@@ -1,4 +1,11 @@
-/* This file aims to define the shape of exchanged message between the devices
+/*
+ * Ce code est la propriété des membres du projet DAZZ Illumination Tour Eiffel. Sa copie et son
+ * utilisation est réglementé par la convention de partenariat établie conjointement entre l'
+ * ECE Paris, la Société d'Exploitation de la Tour Eiffel, ainsi que les membres du projet.
+ */
+
+/* 
+ * This file aims to define the shape of exchanged message between the devices
  * When a message is received, it is translated here.
  */
 
@@ -46,7 +53,7 @@ struct message_t {
 /*
  * Defines action to perform when a message is received
  */
-void lora_handling_message_received(void* taskparameters);
+void lora_handling_message_received(uint8_t* message_buff);
 
 /*
  * Implement a default config for Lora protocol

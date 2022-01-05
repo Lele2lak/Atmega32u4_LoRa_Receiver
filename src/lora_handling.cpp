@@ -1,3 +1,8 @@
+/*
+ * Ce code est la propriété des membres du projet DAZZ Illumination Tour Eiffel. Sa copie et son
+ * utilisation est réglementé par la convention de partenariat établie conjointement entre l'
+ * ECE Paris, la Société d'Exploitation de la Tour Eiffel, ainsi que les membres du projet.
+ */
 
 #include "lora_handling.hpp"
 
@@ -10,8 +15,9 @@
 
 static message_t message_received;
 static RH_RF95 rf95(RFM95_CS, RFM95_INT);
+
 static uint8_t buff_message[sizeof(message_t)];
-static uint8_t buff_message_len = sizeof(buff_message);
+static uint8_t buff_message_len = sizeof(message_t);
 
 void lora_default_config(void* taskparameters) {
     
@@ -19,79 +25,60 @@ void lora_default_config(void* taskparameters) {
 
 void lora_rcv_init() {
 
-    /* Debug LED */
-    digitalWrite(12,HIGH);
-
     pinMode(RFM95_RST, OUTPUT);
     digitalWrite(RFM95_RST, HIGH);
 
     while(!rf95.init());
-
     while(!rf95.setFrequency(915.0));
-
-    /* Debug LED */
-    digitalWrite(12,LOW);
 
 }
 
 void lora_catch_up_message(void* taskparameters) {
     while(1) {
         /* Check if a message was received */
-        
-        //digitalWrite(10,HIGH);
-
         if(rf95.available()) {
-            digitalWrite(12,HIGH);
-            vTaskDelay(100 / portTICK_PERIOD_MS);
 
-            /* Write this message into a message type buffer */
+            Serial.println("[LORA] - Message reçu");
+
+            /* Write the message into a message type buffer */
             if(!rf95.recv(buff_message,&buff_message_len)) {
-                digitalWrite(11,HIGH);
-                vTaskDelay(100 / portTICK_PERIOD_MS);
-                digitalWrite(11,LOW);
+                Serial.println("[LORA] - Recopie du message impossible");
             }
-
-            digitalWrite(12,LOW);
+            else {
+                lora_handling_message_received(buff_message);
+            }
         }
-        else {
-           // digitalWrite(10,LOW);
-            vTaskDelay(1000 / portTICK_PERIOD_MS);
-        }
-
     }
-
 }
 
-void lora_handling_message_received(void* taskparameters) {
+void lora_handling_message_received(uint8_t* message) {
 
-    while(1)
+    struct message_t* message_recv = (struct message_t*)message;
+    
+    switch (message_recv->message_action)
     {
-        struct message_t message_recv;
-        
-        switch (message_recv.message_action)
-        {
-        case ACTION_REPORT_REQUEST:
-            internal_report();
-            break;
-        
-        case ACTION_OPERATIONAL_TEST:
-            /* TODO */
-            break;
+    case ACTION_REPORT_REQUEST:
+        internal_report();
+        break;
+    
+    case ACTION_OPERATIONAL_TEST:
+        /* TODO */
+        break;
 
-        case ACTION_ON:
-            /* TODO */
-            break;
+    case ACTION_ON:
+        /* TODO */
+        Serial.println("Turn ON the LED");
+        break;
 
-        case ACTION_OFF:
-            /* TODO */
-            break;
-        
-        case ACTION_GLITTER_ET:
-            /* TODO */
-            break;
-        
-        default:
-            break;
-        }
-    }    
+    case ACTION_OFF:
+        /* TODO */
+        break;
+    
+    case ACTION_GLITTER_ET:
+        /* TODO */
+        break;
+    
+    default:
+        break;
+    }  
 }
