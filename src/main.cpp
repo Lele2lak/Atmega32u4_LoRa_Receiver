@@ -5,14 +5,14 @@
  */
 #include <Arduino.h>
 
-extern "C" {
-#include "led_handling.h"
-#include "main.h"
-}
+
+#include "main.hpp"
+
 
 #include <FreeRTOS.h>
 #include "task.h"
 #include "lora_handling.hpp"
+#include "led_handling.hpp"
 
 #include "internal.hpp"
 #include <SPI.h>
@@ -31,13 +31,24 @@ void setup() {
 
   TaskHandle_t lora_catch_up_task = NULL;
 
-  lora_rcv_init();
+  struct tasks tasklist;
+
+  lora_init();
+
+
+  xTaskCreate(led_glittering_et,
+              "led_glitterring_et",
+              configMINIMAL_STACK_SIZE,
+              NULL,
+              0,
+              &(tasklist.led_glittering_et_Task)
+              );
 
   xTaskCreate(lora_catch_up_message,
               "lora_catch_up_message",
               configMINIMAL_STACK_SIZE,
-              NULL,
-              1,
+              (void *)&tasklist,
+              2,
               &lora_catch_up_task
               );
   

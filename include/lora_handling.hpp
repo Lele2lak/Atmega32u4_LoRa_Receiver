@@ -27,6 +27,7 @@ enum color {
 
 enum action {
     ACTION_GLITTER_ET,              /*Faire scintiller la lampe selon la seq de la Tour Eiffel*/
+    ACTION_GLITTER_ET_OFF,          /*Arreter la sequence de scintillement Tour Eiffel*/
     ACTION_GLITTER_SEQ,             /*Transmettre une sequence de scintillement specifique + couleur */
     ACTION_OPERATIONAL_TEST,        /*Envoyer une seq de test*/
     ACTION_ON,                      /*Allumer la lampe*/
@@ -66,8 +67,12 @@ void lora_default_config(void* taskparameters);
 void lora_catch_up_message(void* taskparameters);
 
 /*
- * Init the LoRa Receive process.
+ * Init the LoRa Receive and Send processes
  */
-void lora_rcv_init();
+void lora_init(void);
+
+/*
+ * Send a message using LoRa
+ */
 
 #endif /*LORA_HANDLING_H*/
