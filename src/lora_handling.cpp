@@ -1,6 +1,6 @@
 /*
  * Ce code est la propriété des membres du projet DAZZ Illumination Tour Eiffel. Sa copie et son
- * utilisation est réglementé par la convention de partenariat établie conjointement entre l'
+ * utilisation sont réglementées par la convention de partenariat établie conjointement entre l'
  * ECE Paris, la Société d'Exploitation de la Tour Eiffel, ainsi que les membres du projet.
  */
 
@@ -59,6 +59,12 @@ void lora_catch_up_message(void* taskparameters) {
     }
 }
 
+void lora_send(uint8_t* buff, size_t size) {
+    uint8_t* buffer_to_send = buff;
+    rf95.send(buffer_to_send, size);
+    rf95.waitPacketSent();
+}
+
 void lora_handling_message_received(uint8_t* message) {
 
     struct message_t* message_recv = (struct message_t*)message;
@@ -67,7 +73,22 @@ void lora_handling_message_received(uint8_t* message) {
     {
     case ACTION_REPORT_REQUEST: {
         Serial.println("[DEBUG] - Report Request");
-        internal_report();
+        //internal_report();
+        
+        struct report_t report = internal_detailed_report();
+
+        struct message_t message_to_send;
+        message_to_send.message_action = ACTION_REPORT_SEND;
+        
+        message_to_send.data_u.report = report;
+
+        struct report_t report_test = (struct report_t)message_to_send.data_u.report;
+
+        Serial.print("[LORA] - Battery lvl: ");
+        Serial.println(report_test.battery_level);
+
+        lora_send((uint8_t*)&message_to_send,sizeof(message_to_send));
+
         break;
     }
     

@@ -1,6 +1,6 @@
 /*
  * Ce code est la propriété des membres du projet DAZZ Illumination Tour Eiffel. Sa copie et son
- * utilisation est réglementé par la convention de partenariat établie conjointement entre l'
+ * utilisation sont réglementées par la convention de partenariat établie conjointement entre l'
  * ECE Paris, la Société d'Exploitation de la Tour Eiffel, ainsi que les membres du projet.
  */
 
@@ -58,6 +58,24 @@ void internal_report(void) {
      *Si c'esun un noeud => Renvoyer les ids des lampes KO
      */
     
+}
+
+struct report_t internal_detailed_report(void) {
+    struct report_t report;
+    uint32_t battery_lvl;
+
+    battery_lvl = analogRead(BATPORT);
+    /*battery_lvl *=2;
+    battery_lvl *= 3.3;
+    battery_lvl /= 1024;*/
+
+    report.battery_level = battery_lvl;
+
+    Serial.print("[DEBUG] - Battery Level: ");
+    Serial.println(report.battery_level);
+
+    return report;
+
 }
 
 void internal_launch_config(void* parameters) {

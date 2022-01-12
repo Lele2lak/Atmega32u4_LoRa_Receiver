@@ -1,6 +1,6 @@
 /*
  * Ce code est la propriété des membres du projet DAZZ Illumination Tour Eiffel. Sa copie et son
- * utilisation est réglementé par la convention de partenariat établie conjointement entre l'
+ * utilisation sont réglementées par la convention de partenariat établie conjointement entre l'
  * ECE Paris, la Société d'Exploitation de la Tour Eiffel, ainsi que les membres du projet.
  */
 
@@ -13,6 +13,7 @@
 #define LORA_HANDLING_H
 
 #include <RH_RF95.h>
+#include "internal.hpp"
 
 #define RFM95_CS 8
 #define RFM95_RST 4
@@ -33,7 +34,8 @@ enum action {
     ACTION_ON,                      /*Allumer la lampe*/
     ACTION_OFF,                     /*L'eteindre*/
     ACTION_REPORT_REQUEST,          /*Demander un rapport d'etat*/
-    ACTION_REPORT_RECONFIG          /*Reconfigurer selon le rapport d'etat*/
+    ACTION_REPORT_RECONFIG,         /*Reconfigurer selon le rapport d'etat*/
+    ACTION_REPORT_SEND              /*Envoie d'un message de rapport*/
 };
 
 enum status {
@@ -48,7 +50,12 @@ enum status {
  */
 struct message_t {
     enum action message_action;
-    uint8_t data[10];
+    //uint8_t* data;
+    union data
+    {
+        struct report_t report;
+    }data_u;
+    
 };
 
 /*
@@ -74,5 +81,6 @@ void lora_init(void);
 /*
  * Send a message using LoRa
  */
+void lora_send(uint8_t* buff, size_t message_size);
 
 #endif /*LORA_HANDLING_H*/

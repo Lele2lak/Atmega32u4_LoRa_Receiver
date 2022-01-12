@@ -1,6 +1,6 @@
 /*
  * Ce code est la propriété des membres du projet DAZZ Illumination Tour Eiffel. Sa copie et son
- * utilisation est réglementé par la convention de partenariat établie conjointement entre l'
+ * utilisation sont réglementées par la convention de partenariat établie conjointement entre l'
  * ECE Paris, la Société d'Exploitation de la Tour Eiffel, ainsi que les membres du projet.
  */
 #include <Arduino.h>
@@ -23,6 +23,7 @@ void setup() {
   Serial.begin(9600);
   delay(100);
 
+  digitalWrite(13,HIGH);
   pinMode(9, OUTPUT);
   pinMode(10, OUTPUT);
   pinMode(11, OUTPUT);
