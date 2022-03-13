@@ -30,11 +30,15 @@ void lora_init() {
     digitalWrite(RFM95_RST, HIGH);
 
     while(!rf95.init());
-    while(!rf95.setFrequency(915.0));
+    while(!rf95.setFrequency(LORA_FREQ));
 
     /* Set the transmission power */
     rf95.setTxPower(13);
 
+}
+
+void lora_change_power(uint8_t tx_power) {
+    rf95.setTxPower(tx_power);
 }
 
 void lora_catch_up_message(void* taskparameters) {
@@ -54,15 +58,15 @@ void lora_catch_up_message(void* taskparameters) {
             }
             else {
                 /*If the message is not for us, drop it*/
-                if( (((struct message_t*) buff_message)->destination_id) != internal_config_get_self_id() ) {
+                if( ((((struct message_t*) buff_message)->destination_id) != internal_config_get_self_id()) || 
+                    ((((struct message_t*) buff_message)->destination_id) != UNIVERSAL_CALL)) {
                     memset(&buff_message,0,buff_message_len);
                     Serial.println("[LORA] - ID not matching, message dropped");
                 }
                 else {
                     /*Send an acknowledge back*/
                     destination = ((struct message_t*) buff_message)->source_id;
-                    action_to_perform = ((struct message_t*) buff_message)->message_action;
-                    lora_send_ack(ACK_OK, action_to_perform, destination);
+                    lora_send_ack(ACK_OK, destination);
                     Serial.println("[LORA] - ID matching, sending acknowledge back");
                     /*Treat the message received*/
                     lora_handling_message_received(buff_message);
@@ -78,7 +82,7 @@ void lora_send(uint8_t* buff, size_t size) {
     rf95.waitPacketSent();
 }
 
-uint8_t lora_send_ack(e_ack_type ack,enum action action_to_perform, uint8_t destination) {
+uint8_t lora_send_ack(e_ack_type ack, uint8_t destination) {
     struct message_t ack_message;
     ack_message.message_action = ACTION_ACK;
     ack_message.data_u.ack = ack;
@@ -159,6 +163,11 @@ void lora_handling_message_received(uint8_t* message) {
     case ACTION_RESET: {
         internal_reset();
         break;
+    }
+
+    case ACTION_RQST_ACK: {
+        /*Send an acknowledge to the destination light*/
+        lora_send_ack(ACK_OK, message_recv->source_id);
     }
     default: {
         Serial.println("[DEBUG] - Default Case");

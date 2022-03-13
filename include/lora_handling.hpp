@@ -17,6 +17,8 @@
 #define RFM95_RST 4
 #define RFM95_INT 7
 
+#define LORA_FREQ 868.0
+
 /*Time between two message when no aknowledge is received*/
 #define TO_SEND_MESSAGE 100
 
@@ -38,7 +40,8 @@ enum action {
     ACTION_REPORT_RECONFIG,         /*Reconfigurer selon le rapport d'etat*/
     ACTION_REPORT_SEND,             /*Envoie d'un message de rapport*/
     ACTION_ACK,
-    ACTION_RESET
+    ACTION_RESET,
+    ACTION_RQST_ACK                 /*Ask for just an ack*/
 };
 
 /*Enum of different acknowledge types*/
@@ -84,6 +87,11 @@ void lora_catch_up_message(void* taskparameters);
 void lora_init(void);
 
 /*
+ * Change Lora transmition power
+ */
+void lora_change_power(uint8_t tx_power);
+
+/*
  * Send a message using LoRa
  */
 void lora_send(uint8_t* buff, size_t message_size);
@@ -91,5 +99,5 @@ void lora_send(uint8_t* buff, size_t message_size);
 /*
  * Send an acknowledge message
  */
-uint8_t lora_send_ack(e_ack_type ack, enum action action_performed, uint8_t remote_addr);
+uint8_t lora_send_ack(e_ack_type ack, uint8_t remote_addr);
 #endif /*LORA_HANDLING_H*/

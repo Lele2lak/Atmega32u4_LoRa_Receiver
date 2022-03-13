@@ -10,6 +10,7 @@
 #define POINT   0
 #define NODE    1
 #define BATPORT A2
+#define UNIVERSAL_CALL 0
 
 struct report_t {
     float battery_level;
@@ -31,7 +32,7 @@ enum status {
 void internal_config_set_light_type(uint8_t type);
 
 /*
- * Get the loght id.
+ * Get the light id.
  */
 uint8_t internal_config_get_self_id(void);
 
