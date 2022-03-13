@@ -1,0 +1,4 @@
+[submodule "RH-RF95"]
+	path = lib/RH-RF95
+	url = https://github.com/kenbiba/RH-RF95
+
