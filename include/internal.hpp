@@ -1,7 +1,5 @@
 /*
- * Ce code est la propriété des membres du projet DAZZ Illumination Tour Eiffel. Sa copie et son
- * utilisation sont réglementées par la convention de partenariat établie conjointement entre l'
- * ECE Paris, la Société d'Exploitation de la Tour Eiffel, ainsi que les membres du projet.
+ * Ce code est la propriété de Léo Branchut. Tous droits réservés.
  */
 
 #ifndef INTERNAL_H
@@ -14,8 +12,17 @@
 #define BATPORT A2
 
 struct report_t {
-    uint32_t battery_level;
+    float battery_level;
+    float battery_current;
     uint16_t time_since_launched;
+};
+
+enum status {
+    ERROR               = 100,          /* Global error */
+    BATTERY_ERROR       = 101,          /* Specific error due to battery level */
+    LED_ERROR           = 102,          /* Specific error due to LED state */
+    TEMPERATURE_ERROR   = 103,          /* Specific error due to temperature */
+    OK                  = 104           /* OK status */
 };
 
 /*
@@ -24,19 +31,28 @@ struct report_t {
 void internal_config_set_light_type(uint8_t type);
 
 /*
+ * Get the loght id.
+ */
+uint8_t internal_config_get_self_id(void);
+
+/*
  * Get the light type.
  */
 uint8_t internal_config_get_light_type(void);
 
 /*
+ * Reset the light software
+ */
+void internal_reset(void);
+/*
  * Launch an initial config.
  */
-void internal_launch_config(void* parameters);
+uint8_t internal_launch_config(void* parameters);
 
 /*
  * Method to get the functional report befor turning ON.
  */
-void internal_report(void);
+uint8_t internal_report(void);
 
 /*
  * Method to get the detailed state report of the device.

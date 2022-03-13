@@ -1,7 +1,5 @@
 /*
- * Ce code est la propriété des membres du projet DAZZ Illumination Tour Eiffel. Sa copie et son
- * utilisation sont réglementées par la convention de partenariat établie conjointement entre l'
- * ECE Paris, la Société d'Exploitation de la Tour Eiffel, ainsi que les membres du projet.
+ * Ce code est la propriété de Léo Branchut. Tous droits réservés.
  */
 
 #include "lora_handling.hpp"
@@ -42,6 +40,8 @@ void lora_init() {
 void lora_catch_up_message(void* taskparameters) {
 
     other_tasks = (struct tasks*) taskparameters;
+    uint8_t destination;
+    enum action action_to_perform;
     while(1) {
         /* Check if a message was received */
         if(rf95.available()) {
@@ -53,7 +53,20 @@ void lora_catch_up_message(void* taskparameters) {
                 Serial.println("[LORA] - Recopie du message impossible");
             }
             else {
-                lora_handling_message_received(buff_message);
+                /*If the message is not for us, drop it*/
+                if( (((struct message_t*) buff_message)->destination_id) != internal_config_get_self_id() ) {
+                    memset(&buff_message,0,buff_message_len);
+                    Serial.println("[LORA] - ID not matching, message dropped");
+                }
+                else {
+                    /*Send an acknowledge back*/
+                    destination = ((struct message_t*) buff_message)->source_id;
+                    action_to_perform = ((struct message_t*) buff_message)->message_action;
+                    lora_send_ack(ACK_OK, action_to_perform, destination);
+                    Serial.println("[LORA] - ID matching, sending acknowledge back");
+                    /*Treat the message received*/
+                    lora_handling_message_received(buff_message);
+                }
             }
         }
     }
@@ -63,6 +76,13 @@ void lora_send(uint8_t* buff, size_t size) {
     uint8_t* buffer_to_send = buff;
     rf95.send(buffer_to_send, size);
     rf95.waitPacketSent();
+}
+
+uint8_t lora_send_ack(e_ack_type ack,enum action action_to_perform, uint8_t destination) {
+    struct message_t ack_message;
+    ack_message.message_action = ACTION_ACK;
+    ack_message.data_u.ack = ack;
+
 }
 
 void lora_handling_message_received(uint8_t* message) {
@@ -136,9 +156,18 @@ void lora_handling_message_received(uint8_t* message) {
         break;
     }
 
+    case ACTION_RESET: {
+        internal_reset();
+        break;
+    }
     default: {
         Serial.println("[DEBUG] - Default Case");
         break;
     }
     }  
 }
+
+/*
+ *TODO
+ *Synchroniser les clocks (calculer le délai de propagation)
+ */

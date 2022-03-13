@@ -1,7 +1,5 @@
 /*
- * Ce code est la propriété des membres du projet DAZZ Illumination Tour Eiffel. Sa copie et son
- * utilisation sont réglementées par la convention de partenariat établie conjointement entre l'
- * ECE Paris, la Société d'Exploitation de la Tour Eiffel, ainsi que les membres du projet.
+ * Ce code est la propriété de Léo Branchut. Tous droits réservés.
  */
 #include <Arduino.h>
 
@@ -34,7 +32,16 @@ void setup() {
 
   struct tasks tasklist;
 
+
+  if(internal_launch_config(NULL) == 0) {
+    Serial.println("[SYSTEM] - Config load OK");
+  } else {
+    Serial.println("[DEBUG] - Error while loading config");
+    /*Restarting*/
+    internal_reset();
+  }
   lora_init();
+
 
 
   xTaskCreate(led_glittering_et,
