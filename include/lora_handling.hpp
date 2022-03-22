@@ -41,13 +41,16 @@ enum action {
     ACTION_REPORT_SEND,             /*Envoie d'un message de rapport*/
     ACTION_ACK,
     ACTION_RESET,
-    ACTION_RQST_ACK                 /*Ask for just an ack*/
+    ACTION_RQST_ACK,                /*Ask for just an ack*/
+    ACTION_RQST_ATTENDANCE_ACK,     /*Request a attendance ack*/
+    ACTION_INFOS                    /*Receive infos from the mesh node light*/
 };
 
 /*Enum of different acknowledge types*/
 enum e_ack_type {
     ACK_OK,
-    ACK_KO
+    ACK_KO,
+    ACK_ATTENDANCE
 };
 
 /* 
@@ -61,6 +64,7 @@ struct message_t {
     {
         struct report_t report;
         uint8_t report_status;
+        t_network_points infos;
         e_ack_type ack;
         /* Possibilité de rajouter d'autres données */
     }data_u;
@@ -70,6 +74,11 @@ struct message_t {
  * Defines action to perform when a message is received
  */
 void lora_handling_message_received(uint8_t* message_buff);
+
+/*
+ * Treat an attendance message
+ */
+void lora_handling_attendance_received(uint8_t* buff_message);
 
 /*
  * Implement a default config for Lora protocol
@@ -100,4 +109,10 @@ void lora_send(uint8_t* buff, size_t message_size);
  * Send an acknowledge message
  */
 uint8_t lora_send_ack(e_ack_type ack, uint8_t remote_addr);
+
+/*
+ * Send light infos (mesh_id, status, type) to the corresponding light.
+ */
+int network_send_light_inf(int index);
+
 #endif /*LORA_HANDLING_H*/
