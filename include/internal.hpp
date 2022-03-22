@@ -32,6 +32,16 @@ enum status {
 void internal_config_set_light_type(uint8_t type);
 
 /*
+ * Define the id of a light within the mesh.
+ */
+void internal_config_set_light_mesh_id(uint16_t mesh_id);
+
+/*
+ * Define the status of the light.
+ */
+void internal_config_set_light_status(uint8_t status);
+
+/*
  * Get the light id.
  */
 uint8_t internal_config_get_self_id(void);

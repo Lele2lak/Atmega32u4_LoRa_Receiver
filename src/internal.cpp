@@ -15,12 +15,21 @@ struct ctxt_t {
     uint8_t type;
     uint8_t status;
     uint32_t id;
+    uint16_t mesh_id;
 };
 
 struct ctxt_t ctxt;
 
-void internal_config_light_type(uint8_t type) {
+void internal_config_set_light_type(uint8_t type) {
     ctxt.type = type;
+}
+
+void internal_config_set_light_status(uint8_t status) {
+    ctxt.status = status;
+}
+
+void internal_config_set_light_mesh_id(uint16_t mesh_id) {
+    ctxt.mesh_id = mesh_id;
 }
 
 uint8_t internal_config_get_self_id(void) {
